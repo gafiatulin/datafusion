@@ -20,6 +20,9 @@
 #[cfg(feature = "parquet")]
 mod parquet;
 
+#[cfg(feature = "avro")]
+mod avro;
+
 use crate::arrow::record_batch::RecordBatch;
 use crate::arrow::util::pretty;
 use crate::datasource::file_format::csv::CsvFormatFactory;

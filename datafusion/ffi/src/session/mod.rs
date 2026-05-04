@@ -339,6 +339,7 @@ fn table_options_to_rhash(mut options: TableOptions) -> SVec<(SString, SString)>
                 #[cfg(feature = "parquet")]
                 ConfigFileType::PARQUET => "parquet",
                 ConfigFileType::CSV => "csv",
+                ConfigFileType::AVRO => "avro",
             }
             .into(),
         );
@@ -642,6 +643,7 @@ fn table_options_from_rhashmap(options: SVec<(SString, SString)>) -> TableOption
         ConfigFileType::JSON,
         #[cfg(feature = "parquet")]
         ConfigFileType::PARQUET,
+        ConfigFileType::AVRO,
     ];
     for format in formats {
         // It is imperative that if new enum variants are added below that they be
@@ -651,6 +653,7 @@ fn table_options_from_rhashmap(options: SVec<(SString, SString)>) -> TableOption
             #[cfg(feature = "parquet")]
             ConfigFileType::PARQUET => "parquet",
             ConfigFileType::JSON => "json",
+            ConfigFileType::AVRO => "avro",
         };
         let format_options: HashMap<String, String> = options
             .iter()
@@ -674,7 +677,7 @@ fn table_options_from_rhashmap(options: SVec<(SString, SString)>) -> TableOption
         .iter()
         .filter_map(|(k, v)| {
             let (prefix, _) = k.split_once(".")?;
-            if !["json", "parquet", "csv"].contains(&prefix) {
+            if !["json", "parquet", "csv", "avro"].contains(&prefix) {
                 Some((k.to_owned(), v.to_owned()))
             } else {
                 None
@@ -693,6 +696,7 @@ fn table_options_from_rhashmap(options: SVec<(SString, SString)>) -> TableOption
             #[cfg(feature = "parquet")]
             "parquet" => Some(ConfigFileType::PARQUET),
             "json" => Some(ConfigFileType::JSON),
+            "avro" => Some(ConfigFileType::AVRO),
             _ => None,
         });
     table_options

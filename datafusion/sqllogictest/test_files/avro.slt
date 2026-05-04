@@ -303,3 +303,117 @@ physical_plan DataSourceExec: file_groups={1 group: [[WORKSPACE_ROOT/testing/dat
 # Config reset
 statement ok
 reset datafusion.sql_parser.map_string_types_to_utf8view;
+
+# -----------------------------------------------------------------------------
+# Avro write coverage: COPY ... TO ... STORED AS AVRO and CREATE EXTERNAL TABLE
+# round-trip on the produced files.
+# -----------------------------------------------------------------------------
+
+statement ok
+CREATE TABLE avro_source(id INT NOT NULL, name VARCHAR) AS
+VALUES (1, 'alice'), (2, 'bob'), (3, NULL);
+
+# 1. Default (uncompressed) COPY to a directory and read back.
+query I
+COPY avro_source TO 'test_files/scratch/avro/uncompressed/' STORED AS AVRO;
+----
+3
+
+statement ok
+CREATE EXTERNAL TABLE avro_uncompressed
+STORED AS AVRO
+LOCATION 'test_files/scratch/avro/uncompressed/';
+
+query IT rowsort
+SELECT id, name FROM avro_uncompressed;
+----
+1 alice
+2 bob
+3 NULL
+
+# 2. Single-file output via .avro extension + per-codec compression OPTIONS.
+query I
+COPY avro_source TO 'test_files/scratch/avro/snappy.avro'
+STORED AS AVRO OPTIONS ('format.compression' 'snappy');
+----
+3
+
+statement ok
+CREATE EXTERNAL TABLE avro_snappy STORED AS AVRO
+LOCATION 'test_files/scratch/avro/snappy.avro';
+
+query IT rowsort
+SELECT id, name FROM avro_snappy;
+----
+1 alice
+2 bob
+3 NULL
+
+query I
+COPY avro_source TO 'test_files/scratch/avro/deflate.avro'
+STORED AS AVRO OPTIONS ('format.compression' 'deflate', 'format.compression_level' '6');
+----
+3
+
+statement ok
+CREATE EXTERNAL TABLE avro_deflate STORED AS AVRO
+LOCATION 'test_files/scratch/avro/deflate.avro';
+
+query IT rowsort
+SELECT id, name FROM avro_deflate;
+----
+1 alice
+2 bob
+3 NULL
+
+query I
+COPY avro_source TO 'test_files/scratch/avro/zstd.avro'
+STORED AS AVRO OPTIONS ('format.compression' 'zstd', 'format.compression_level' '3');
+----
+3
+
+statement ok
+CREATE EXTERNAL TABLE avro_zstd STORED AS AVRO
+LOCATION 'test_files/scratch/avro/zstd.avro';
+
+query IT rowsort
+SELECT id, name FROM avro_zstd;
+----
+1 alice
+2 bob
+3 NULL
+
+# 3. Tunable block size also has to round-trip cleanly.
+query I
+COPY avro_source TO 'test_files/scratch/avro/blocked.avro'
+STORED AS AVRO OPTIONS ('format.block_size' '4096');
+----
+3
+
+statement ok
+CREATE EXTERNAL TABLE avro_blocked STORED AS AVRO
+LOCATION 'test_files/scratch/avro/blocked.avro';
+
+query IT rowsort
+SELECT id, name FROM avro_blocked;
+----
+1 alice
+2 bob
+3 NULL
+
+# 4. Invalid codec must fail with a clear error rather than silently writing.
+statement error DataFusion error: Invalid or Unsupported Configuration: Unsupported Avro compression codec 'lz4'
+COPY avro_source TO 'test_files/scratch/avro/bad.avro'
+STORED AS AVRO OPTIONS ('format.compression' 'lz4');
+
+# 5. CREATE EXTERNAL TABLE accepts the AVRO format with options at definition
+#    time (proves the SQL options pipe into AvroFormatFactory at register time).
+statement ok
+CREATE EXTERNAL TABLE avro_with_format_opts STORED AS AVRO
+LOCATION 'test_files/scratch/avro/uncompressed/'
+OPTIONS ('format.compression' 'uncompressed');
+
+query I
+SELECT count(*) FROM avro_with_format_opts;
+----
+3

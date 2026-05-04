@@ -39,7 +39,7 @@ use datafusion_common::{
     DataFusionError, JoinSide, ScalarValue, Statistics, TableReference,
     arrow_datafusion_err,
     config::{
-        CsvOptions, JsonOptions, MaxRowGroupBytes, ParquetCdcOptions,
+        AvroOptions, CsvOptions, JsonOptions, MaxRowGroupBytes, ParquetCdcOptions,
         ParquetColumnOptions, ParquetOptions, TableParquetOptions,
     },
     file_options::{csv_writer::CsvWriterOptions, json_writer::JsonWriterOptions},
@@ -1238,6 +1238,27 @@ impl TryFrom<&protobuf::JsonOptions> for JsonOptions {
             compression_level: proto_opts.compression_level,
             schema_infer_max_rec: proto_opts.schema_infer_max_rec.map(|h| h as usize),
             newline_delimited: proto_opts.newline_delimited.unwrap_or(true),
+        })
+    }
+}
+
+impl TryFrom<&protobuf::AvroOptions> for AvroOptions {
+    type Error = DataFusionError;
+
+    fn try_from(
+        proto_opts: &protobuf::AvroOptions,
+    ) -> datafusion_common::Result<Self, Self::Error> {
+        // Default to "uncompressed" if the wire encoding sent the empty default
+        // string (e.g. an old peer that didn't set the field at all).
+        let compression = if proto_opts.compression.is_empty() {
+            "uncompressed".to_string()
+        } else {
+            proto_opts.compression.clone()
+        };
+        Ok(AvroOptions {
+            compression,
+            compression_level: proto_opts.compression_level,
+            block_size: proto_opts.block_size.map(|b| b as usize),
         })
     }
 }

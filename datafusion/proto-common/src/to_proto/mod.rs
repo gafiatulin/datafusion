@@ -36,7 +36,7 @@ use datafusion_common::{
     Column, ColumnStatistics, Constraint, Constraints, DFSchema, DFSchemaRef,
     DataFusionError, JoinSide, ScalarValue, Statistics,
     config::{
-        CsvOptions, JsonOptions, ParquetCdcOptions, ParquetColumnOptions, ParquetOptions,
+        AvroOptions, CsvOptions, JsonOptions, ParquetCdcOptions, ParquetColumnOptions, ParquetOptions,
         TableParquetOptions,
     },
     file_options::{csv_writer::CsvWriterOptions, json_writer::JsonWriterOptions},
@@ -1063,6 +1063,18 @@ impl TryFrom<&JsonOptions> for protobuf::JsonOptions {
             schema_infer_max_rec: opts.schema_infer_max_rec.map(|h| h as u64),
             compression_level: opts.compression_level,
             newline_delimited: Some(opts.newline_delimited),
+        })
+    }
+}
+
+impl TryFrom<&AvroOptions> for protobuf::AvroOptions {
+    type Error = DataFusionError;
+
+    fn try_from(opts: &AvroOptions) -> datafusion_common::Result<Self, Self::Error> {
+        Ok(protobuf::AvroOptions {
+            compression: opts.compression.clone(),
+            compression_level: opts.compression_level,
+            block_size: opts.block_size.map(|b| b as u64),
         })
     }
 }

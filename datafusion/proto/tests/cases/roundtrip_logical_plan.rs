@@ -25,6 +25,7 @@ use arrow::datatypes::{
     SchemaRef, TimeUnit, UnionFields, UnionMode,
 };
 use arrow::util::pretty::pretty_format_batches;
+use datafusion::datasource::file_format::avro::AvroFormatFactory;
 use datafusion::datasource::file_format::json::{JsonFormat, JsonFormatFactory};
 use datafusion::datasource::listing::{
     ListingOptions, ListingTable, ListingTableConfig, ListingTableUrl,
@@ -109,8 +110,8 @@ use datafusion_proto::bytes::{
     logical_plan_to_bytes, logical_plan_to_bytes_with_extension_codec,
 };
 use datafusion_proto::logical_plan::file_formats::{
-    ArrowLogicalExtensionCodec, CsvLogicalExtensionCodec, JsonLogicalExtensionCodec,
-    ParquetLogicalExtensionCodec,
+    ArrowLogicalExtensionCodec, AvroLogicalExtensionCodec, CsvLogicalExtensionCodec,
+    JsonLogicalExtensionCodec, ParquetLogicalExtensionCodec,
 };
 use datafusion_proto::logical_plan::to_proto::serialize_expr;
 use datafusion_proto::logical_plan::{
@@ -1064,6 +1065,71 @@ async fn roundtrip_logical_plan_copy_to_json() -> Result<()> {
                 json_format.schema_infer_max_rec,
                 json_config.schema_infer_max_rec
             );
+        }
+        _ => panic!(),
+    }
+
+    Ok(())
+}
+
+#[tokio::test]
+#[cfg(feature = "avro")]
+async fn roundtrip_logical_plan_copy_to_avro() -> Result<()> {
+    let ctx = SessionContext::new();
+
+    // Reuse the JSON scan as a stand-in source — only the COPY TO target
+    // matters for this round-trip.
+    let input = create_json_scan(&ctx).await?;
+
+    let table_options =
+        TableOptions::default_from_session_config(ctx.state().config_options());
+    let mut avro_format = table_options.avro;
+
+    // Set non-default values to make sure the field round-trips.
+    avro_format.compression = "zstd".to_string();
+    avro_format.compression_level = Some(7);
+    avro_format.block_size = Some(32 * 1024);
+
+    let file_type = format_as_file_type(Arc::new(AvroFormatFactory::new_with_options(
+        avro_format.clone(),
+    )));
+
+    let plan = LogicalPlan::Copy(CopyTo::new(
+        Arc::new(input),
+        "test.avro".to_string(),
+        vec!["a".to_string(), "b".to_string(), "c".to_string()],
+        file_type,
+        Default::default(),
+    ));
+
+    let codec = AvroLogicalExtensionCodec {};
+    let bytes = logical_plan_to_bytes_with_extension_codec(&plan, &codec)?;
+    let logical_round_trip =
+        logical_plan_from_bytes_with_extension_codec(&bytes, &ctx.task_ctx(), &codec)?;
+    assert_eq!(format!("{plan}"), format!("{logical_round_trip}"));
+
+    match logical_round_trip {
+        LogicalPlan::Copy(copy_to) => {
+            assert_eq!("test.avro", copy_to.output_url);
+            assert_eq!("avro".to_string(), copy_to.file_type.get_ext());
+            assert_eq!(vec!["a", "b", "c"], copy_to.partition_by);
+
+            let file_type = copy_to
+                .file_type
+                .as_ref()
+                .as_any()
+                .downcast_ref::<DefaultFileType>()
+                .unwrap();
+
+            let format_factory = file_type.as_format_factory();
+            let avro_factory = format_factory
+                .as_ref()
+                .downcast_ref::<AvroFormatFactory>()
+                .unwrap();
+            let avro_config = avro_factory.options.as_ref().unwrap();
+            assert_eq!(avro_format.compression, avro_config.compression);
+            assert_eq!(avro_format.compression_level, avro_config.compression_level);
+            assert_eq!(avro_format.block_size, avro_config.block_size);
         }
         _ => panic!(),
     }

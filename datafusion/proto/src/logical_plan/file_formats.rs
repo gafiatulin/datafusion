@@ -18,11 +18,16 @@
 use std::sync::Arc;
 
 use super::LogicalExtensionCodec;
-use crate::protobuf::{CsvOptions as CsvOptionsProto, JsonOptions as JsonOptionsProto};
-use datafusion_common::config::{CsvOptions, JsonOptions};
+use crate::protobuf::{
+    AvroOptions as AvroOptionsProto, CsvOptions as CsvOptionsProto,
+    JsonOptions as JsonOptionsProto,
+};
+use datafusion_common::config::{AvroOptions, CsvOptions, JsonOptions};
 use datafusion_common::{TableReference, exec_datafusion_err, exec_err, not_impl_err};
 use datafusion_datasource::file_format::FileFormatFactory;
 use datafusion_datasource_arrow::file_format::ArrowFormatFactory;
+#[cfg(feature = "avro")]
+use datafusion_datasource_avro::file_format::AvroFormatFactory;
 use datafusion_datasource_csv::file_format::CsvFormatFactory;
 use datafusion_datasource_json::file_format::JsonFormatFactory;
 use datafusion_execution::TaskContext;
@@ -397,10 +402,35 @@ impl LogicalExtensionCodec for ArrowLogicalExtensionCodec {
     }
 }
 
+/// Build a wire-format [`AvroOptionsProto`] from datafusion's [`AvroOptions`].
+fn avro_options_to_proto(options: &AvroOptions) -> AvroOptionsProto {
+    AvroOptionsProto {
+        compression: options.compression.clone(),
+        compression_level: options.compression_level,
+        block_size: options.block_size.map(|b| b as u64),
+    }
+}
+
+/// Decode wire-format [`AvroOptionsProto`] into datafusion's [`AvroOptions`].
+fn avro_options_from_proto(proto: &AvroOptionsProto) -> AvroOptions {
+    // Treat the proto3 wire-default empty string as the legacy
+    // "not set => uncompressed" sentinel, matching wire compat for old
+    // peers that didn't send the field at all.
+    let compression = if proto.compression.is_empty() {
+        "uncompressed".to_string()
+    } else {
+        proto.compression.clone()
+    };
+    AvroOptions {
+        compression,
+        compression_level: proto.compression_level,
+        block_size: proto.block_size.map(|b| b as usize),
+    }
+}
+
 #[derive(Debug)]
 pub struct AvroLogicalExtensionCodec;
 
-// TODO! This is a placeholder for now and needs to be implemented for real.
 impl LogicalExtensionCodec for AvroLogicalExtensionCodec {
     fn try_decode(
         &self,
@@ -438,18 +468,58 @@ impl LogicalExtensionCodec for AvroLogicalExtensionCodec {
         not_impl_err!("Method not implemented")
     }
 
+    #[cfg(feature = "avro")]
     fn try_decode_file_format(
         &self,
-        __buf: &[u8],
-        __ctx: &TaskContext,
+        buf: &[u8],
+        _ctx: &TaskContext,
     ) -> datafusion_common::Result<Arc<dyn FileFormatFactory>> {
+        let proto = AvroOptionsProto::decode(buf).map_err(|e| {
+            exec_datafusion_err!("Failed to decode AvroOptionsProto: {e:?}")
+        })?;
+        Ok(Arc::new(AvroFormatFactory {
+            options: Some(avro_options_from_proto(&proto)),
+        }))
+    }
+
+    #[cfg(not(feature = "avro"))]
+    fn try_decode_file_format(
+        &self,
+        _buf: &[u8],
+        _ctx: &TaskContext,
+    ) -> datafusion_common::Result<Arc<dyn FileFormatFactory>> {
+        // Fallback path when the `avro` feature is not enabled in this build:
+        // we still need to return *some* factory to keep distributed peers
+        // alive, but Avro reads/writes will fail later.
         Ok(Arc::new(ArrowFormatFactory::new()))
     }
 
+    #[cfg(feature = "avro")]
     fn try_encode_file_format(
         &self,
-        __buf: &mut Vec<u8>,
-        __node: Arc<dyn FileFormatFactory>,
+        buf: &mut Vec<u8>,
+        node: Arc<dyn FileFormatFactory>,
+    ) -> datafusion_common::Result<()> {
+        let options = if let Some(avro_factory) = node.downcast_ref::<AvroFormatFactory>()
+        {
+            avro_factory.options.clone().unwrap_or_default()
+        } else {
+            return exec_err!("Unsupported FileFormatFactory type");
+        };
+
+        let proto = avro_options_to_proto(&options);
+        proto
+            .encode(buf)
+            .map_err(|e| exec_datafusion_err!("Failed to encode AvroOptions: {e:?}"))?;
+
+        Ok(())
+    }
+
+    #[cfg(not(feature = "avro"))]
+    fn try_encode_file_format(
+        &self,
+        _buf: &mut Vec<u8>,
+        _node: Arc<dyn FileFormatFactory>,
     ) -> datafusion_common::Result<()> {
         Ok(())
     }
