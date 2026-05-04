@@ -639,7 +639,7 @@ impl AsLogicalPlan for LogicalPlanNode {
                         FileFormatType::Avro(..) => {
                             #[cfg(feature = "avro")]
                             {
-                                Arc::new(AvroFormat)
+                                Arc::new(AvroFormat::default())
                             }
                             #[cfg(not(feature = "avro"))]
                             {

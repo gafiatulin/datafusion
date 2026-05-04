@@ -183,3 +183,26 @@ OPTIONS(
   'BLOOM_FILTER_ENABLED::id' 'true'
 );
 ```
+
+## Avro Format Options
+
+The following options are available when writing Avro Object Container Files (OCF). They have no effect when reading: codec and block boundaries are recovered from the file itself. If any unsupported option is specified, an error will be raised and the query will fail.
+
+| Option            | Description                                                                                                                                                                                                       | OPTIONS Key                  | Default Value  |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- | -------------- |
+| COMPRESSION       | Codec applied **per OCF block** (not to the file as a whole). The codec is recorded in the file header so readers decompress without external configuration. Valid values: `uncompressed`, `deflate`, `snappy`, `zstd`, `bzip2`, `xz`. | `'format.compression'`       | `uncompressed` |
+| COMPRESSION_LEVEL | Codec-specific compression level. Ignored for `uncompressed` and `snappy`. Valid ranges: `deflate` 0..=9 (default 6), `zstd` -7..=22 (default 3), `bzip2` 1..=9 (default 6), `xz` 0..=9 (default 6).              | `'format.compression_level'` | None           |
+| BLOCK_SIZE        | Approximate target uncompressed size of each OCF block, in bytes. Larger blocks improve compression ratios and reduce per-block framing overhead; smaller blocks reduce read latency on filtered scans.           | `'format.block_size'`        | None           |
+
+**Example:**
+
+```sql
+COPY source_table
+  TO '/tmp/avro_out/'
+  STORED AS AVRO
+  OPTIONS (
+    'format.compression' 'zstd',
+    'format.compression_level' '7',
+    'format.block_size' '65536'
+  );
+```

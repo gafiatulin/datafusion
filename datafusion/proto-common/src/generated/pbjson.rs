@@ -847,8 +847,28 @@ impl serde::Serialize for AvroOptions {
         S: serde::Serializer,
     {
         use serde::ser::SerializeStruct;
-        let len = 0;
-        let struct_ser = serializer.serialize_struct("datafusion_common.AvroOptions", len)?;
+        let mut len = 0;
+        if !self.compression.is_empty() {
+            len += 1;
+        }
+        if self.compression_level.is_some() {
+            len += 1;
+        }
+        if self.block_size.is_some() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("datafusion_common.AvroOptions", len)?;
+        if !self.compression.is_empty() {
+            struct_ser.serialize_field("compression", &self.compression)?;
+        }
+        if let Some(v) = self.compression_level.as_ref() {
+            struct_ser.serialize_field("compressionLevel", v)?;
+        }
+        if let Some(v) = self.block_size.as_ref() {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("blockSize", ToString::to_string(&v).as_str())?;
+        }
         struct_ser.end()
     }
 }
@@ -859,10 +879,18 @@ impl<'de> serde::Deserialize<'de> for AvroOptions {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
+            "compression",
+            "compression_level",
+            "compressionLevel",
+            "block_size",
+            "blockSize",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
+            Compression,
+            CompressionLevel,
+            BlockSize,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -883,7 +911,12 @@ impl<'de> serde::Deserialize<'de> for AvroOptions {
                     where
                         E: serde::de::Error,
                     {
-                            Err(serde::de::Error::unknown_field(value, FIELDS))
+                        match value {
+                            "compression" => Ok(GeneratedField::Compression),
+                            "compressionLevel" | "compression_level" => Ok(GeneratedField::CompressionLevel),
+                            "blockSize" | "block_size" => Ok(GeneratedField::BlockSize),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
                     }
                 }
                 deserializer.deserialize_identifier(GeneratedVisitor)
@@ -901,10 +934,39 @@ impl<'de> serde::Deserialize<'de> for AvroOptions {
                 where
                     V: serde::de::MapAccess<'de>,
             {
-                while map_.next_key::<GeneratedField>()?.is_some() {
-                    let _ = map_.next_value::<serde::de::IgnoredAny>()?;
+                let mut compression__ = None;
+                let mut compression_level__ = None;
+                let mut block_size__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::Compression => {
+                            if compression__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("compression"));
+                            }
+                            compression__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::CompressionLevel => {
+                            if compression_level__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("compressionLevel"));
+                            }
+                            compression_level__ = 
+                                map_.next_value::<::std::option::Option<::pbjson::private::NumberDeserialize<_>>>()?.map(|x| x.0)
+                            ;
+                        }
+                        GeneratedField::BlockSize => {
+                            if block_size__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("blockSize"));
+                            }
+                            block_size__ = 
+                                map_.next_value::<::std::option::Option<::pbjson::private::NumberDeserialize<_>>>()?.map(|x| x.0)
+                            ;
+                        }
+                    }
                 }
                 Ok(AvroOptions {
+                    compression: compression__.unwrap_or_default(),
+                    compression_level: compression_level__,
+                    block_size: block_size__,
                 })
             }
         }
