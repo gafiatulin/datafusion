@@ -100,7 +100,19 @@ enum NullEquality {
   NULL_EQUALS_NULL = 1;
 }
 
-message AvroOptions {}
+// Options controlling Avro format (both reading and writing).
+//
+// Most fields apply only when writing Avro Object Container Files (OCF).
+message AvroOptions {
+  // Compression codec for OCF blocks. One of `uncompressed`, `deflate`,
+  // `snappy`, `zstd`, `bzip2`, `xz` (case-insensitive).
+  string compression = 1;
+  // Optional codec-specific compression level. `None` if absent.
+  optional int32 compression_level = 2;
+  // Optional approximate target uncompressed OCF block size in bytes.
+  // `None` if absent.
+  optional uint64 block_size = 3;
+}
 message ArrowOptions {}
 
 message Schema {

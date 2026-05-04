@@ -77,8 +77,23 @@ pub struct Constraints {
     #[prost(message, repeated, tag = "1")]
     pub constraints: ::prost::alloc::vec::Vec<Constraint>,
 }
-#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct AvroOptions {}
+/// Options controlling Avro format (both reading and writing).
+///
+/// Most fields apply only when writing Avro Object Container Files (OCF).
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct AvroOptions {
+    /// Compression codec for OCF blocks. One of `uncompressed`, `deflate`,
+    /// `snappy`, `zstd`, `bzip2`, `xz` (case-insensitive).
+    #[prost(string, tag = "1")]
+    pub compression: ::prost::alloc::string::String,
+    /// Optional codec-specific compression level. `None` if absent.
+    #[prost(int32, optional, tag = "2")]
+    pub compression_level: ::core::option::Option<i32>,
+    /// Optional approximate target uncompressed OCF block size in bytes.
+    /// `None` if absent.
+    #[prost(uint64, optional, tag = "3")]
+    pub block_size: ::core::option::Option<u64>,
+}
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ArrowOptions {}
 #[derive(Clone, PartialEq, ::prost::Message)]
