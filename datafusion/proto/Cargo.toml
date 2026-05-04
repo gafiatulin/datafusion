@@ -49,7 +49,7 @@ json = [
     "datafusion-proto-models/json",
 ]
 parquet = ["datafusion-datasource-parquet", "datafusion-common/parquet", "datafusion/parquet"]
-avro = ["datafusion-datasource-avro"]
+avro = ["datafusion-datasource-avro", "datafusion/avro"]
 
 # Note to developers: do *not* add `datafusion` as a dependency in
 # this crate. See https://github.com/apache/datafusion/issues/17713

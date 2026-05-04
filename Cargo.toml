@@ -100,6 +100,7 @@ arrow-avro = { version = "60.0.0", default-features = false, features = [
     "zstd",
     "bzip2",
     "xz",
+    "async",
 ] }
 arrow-buffer = { version = "60.0.0", default-features = false }
 arrow-data = { version = "60.0.0", default-features = false }
@@ -399,6 +400,25 @@ lto = "thin"
 inherits = "dev"
 debug = false
 incremental = false
+
+# Pin Arrow to the async-writer fork used by datafusion-datasource-avro.
+[patch.crates-io]
+arrow = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
+arrow-arith = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
+arrow-array = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
+arrow-avro = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
+arrow-buffer = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
+arrow-cast = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
+arrow-csv = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
+arrow-data = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
+arrow-ipc = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
+arrow-json = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
+arrow-ord = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
+arrow-row = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
+arrow-schema = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
+arrow-select = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
+arrow-string = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
+parquet = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
 
 # This rule applies to every package except workspace members (dependencies
 # such as `arrow` and `tokio`). It disables debug info and related features on

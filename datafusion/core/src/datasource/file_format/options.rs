@@ -786,7 +786,7 @@ impl ReadOptions<'_> for AvroReadOptions<'_> {
         _config: &SessionConfig,
         _table_options: TableOptions,
     ) -> ListingOptions {
-        let file_format = AvroFormat;
+        let file_format = AvroFormat::default();
 
         ListingOptions::new(Arc::new(file_format))
             .with_file_extension(self.file_extension)
