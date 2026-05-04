@@ -64,7 +64,7 @@ mod tests {
         let filename = format!("{testdata}/avro/alltypes_plain.avro");
         let meta = local_unpartitioned_file(filename);
 
-        let file_schema = AvroFormat {}
+        let file_schema = AvroFormat::default()
             .infer_schema(&state, &store, std::slice::from_ref(&meta))
             .await?;
 
@@ -129,7 +129,7 @@ mod tests {
         let object_store = Arc::new(LocalFileSystem::new()) as _;
         let object_store_url = ObjectStoreUrl::local_filesystem();
         let meta = local_unpartitioned_file(filename);
-        let actual_schema = AvroFormat {}
+        let actual_schema = AvroFormat::default()
             .infer_schema(&state, &object_store, std::slice::from_ref(&meta))
             .await?;
 
@@ -202,7 +202,7 @@ mod tests {
         let object_store = Arc::new(LocalFileSystem::new()) as _;
         let object_store_url = ObjectStoreUrl::local_filesystem();
         let meta = local_unpartitioned_file(filename);
-        let file_schema = AvroFormat {}
+        let file_schema = AvroFormat::default()
             .infer_schema(&state, &object_store, std::slice::from_ref(&meta))
             .await?;
 

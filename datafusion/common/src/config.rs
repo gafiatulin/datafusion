@@ -2996,6 +2996,7 @@ pub enum ConfigFileType {
     PARQUET,
     JSON,
     ARROW,
+    AVRO,
 }
 
 /// Represents the configuration options available for handling different table formats within a data processing application.
@@ -3018,8 +3019,11 @@ pub struct TableOptions {
     /// compression codec used for record batches written to disk.
     pub arrow: ArrowOptions,
 
+    /// Configuration options for Avro file handling.
+    pub avro: AvroOptions,
+
     /// The current file format that the table operations should assume. This option allows
-    /// for dynamic switching between the supported file types (e.g., CSV, Parquet, JSON).
+    /// for dynamic switching between the supported file types (e.g., CSV, Parquet, JSON, Avro).
     pub current_format: Option<ConfigFileType>,
 
     /// Optional extensions that can be used to extend or customize the behavior of the table
@@ -3042,12 +3046,14 @@ impl ConfigField for TableOptions {
                 ConfigFileType::CSV => self.csv.visit(v, "format", ""),
                 ConfigFileType::JSON => self.json.visit(v, "format", ""),
                 ConfigFileType::ARROW => self.arrow.visit(v, "format", ""),
+                ConfigFileType::AVRO => self.avro.visit(v, "format", ""),
             }
         } else {
             self.csv.visit(v, "csv", "");
             self.parquet.visit(v, "parquet", "");
             self.json.visit(v, "json", "");
             self.arrow.visit(v, "arrow", "");
+            self.avro.visit(v, "avro", "");
         }
     }
 
@@ -3080,6 +3086,7 @@ impl ConfigField for TableOptions {
                     ConfigFileType::CSV => self.csv.set(rem, value),
                     ConfigFileType::JSON => self.json.set(rem, value),
                     ConfigFileType::ARROW => self.arrow.set(rem, value),
+                    ConfigFileType::AVRO => self.avro.set(rem, value),
                 }
             }
             _ => _config_err!("Config value \"{key}\" not found on TableOptions"),
@@ -4261,6 +4268,34 @@ config_namespace! {
     }
 }
 
+config_namespace! {
+    /// Options controlling Avro format (both reading and writing).
+    ///
+    /// Most options apply only when **writing** Avro Object Container Files
+    /// (OCF). Reading currently ignores them: codec and block boundaries are
+    /// recovered from the file itself.
+    pub struct AvroOptions {
+        /// Compression codec for OCF blocks. One of `uncompressed`,
+        /// `deflate`, `snappy`, `zstd`, `bzip2`, `xz` (case-insensitive).
+        ///
+        /// Compression is applied per OCF block, not to the file as a whole;
+        /// the codec is recorded in the file header so readers can decompress
+        /// without external configuration.
+        pub compression: String, default = "uncompressed".to_string()
+        /// Compression level for codecs that take one. Ignored for
+        /// `uncompressed` and `snappy`. Valid ranges depend on the codec:
+        /// - `deflate`: 0..=9 (default 6)
+        /// - `zstd`:    -7..=22 (default 3)
+        /// - `bzip2`:   1..=9 (default 6)
+        /// - `xz`:      0..=9 (default 6)
+        /// `None` uses the codec's default level.
+        pub compression_level: Option<i32>, default = None
+        /// Approximate target uncompressed size of an OCF block, in bytes.
+        /// `None` uses the arrow-avro default block size.
+        pub block_size: Option<usize>, default = None
+    }
+}
+
 pub trait OutputFormatExt: Display {}
 
 #[derive(Debug, Clone, PartialEq)]
@@ -4270,7 +4305,7 @@ pub enum OutputFormat {
     JSON(JsonOptions),
     #[cfg(feature = "parquet")]
     PARQUET(TableParquetOptions),
-    AVRO,
+    AVRO(AvroOptions),
     ARROW(ArrowOptions),
 }
 
@@ -4281,7 +4316,7 @@ impl Display for OutputFormat {
             OutputFormat::JSON(_) => "json",
             #[cfg(feature = "parquet")]
             OutputFormat::PARQUET(_) => "parquet",
-            OutputFormat::AVRO => "avro",
+            OutputFormat::AVRO(_) => "avro",
             OutputFormat::ARROW(_) => "arrow",
         };
         write!(f, "{out}")
