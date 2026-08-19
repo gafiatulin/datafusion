@@ -546,6 +546,7 @@ fn roundtrip_csv_scan_preserves_format_options() -> Result<()> {
             terminator: Some(0xff),
             newlines_in_values: Some(true),
             truncated_rows: Some(true),
+            ignore_extra_columns: Some(true),
             ..Default::default()
         }));
 
@@ -587,6 +588,7 @@ fn roundtrip_csv_scan_preserves_format_options() -> Result<()> {
     assert_eq!(csv_source.terminator(), Some(0xff));
     assert!(csv_source.newlines_in_values());
     assert!(csv_source.truncate_rows());
+    assert!(csv_source.ignore_extra_columns());
     assert_eq!(file_scan.file_compression_type, FileCompressionType::GZIP);
 
     for invalid_terminator in [vec![], vec![b'\r', b'\n']] {

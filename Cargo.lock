@@ -159,7 +159,7 @@ checksum = "d3fb67a6e08acf24fdeccbac2cb6ac4305825bd1f117462e0e6f2f193345ad56"
 [[package]]
 name = "arrow"
 version = "60.0.0"
-source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=async-writer#6ca4e9fb51513a526ba10fe409c0af8a65b90fae"
+source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=feat%2Fignore_extra_columns#834ccd0248aecfa65ec86c3b955f7044687ea118"
 dependencies = [
  "arrow-arith",
  "arrow-array",
@@ -181,7 +181,7 @@ dependencies = [
 [[package]]
 name = "arrow-arith"
 version = "60.0.0"
-source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=async-writer#6ca4e9fb51513a526ba10fe409c0af8a65b90fae"
+source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=feat%2Fignore_extra_columns#834ccd0248aecfa65ec86c3b955f7044687ea118"
 dependencies = [
  "arrow-array",
  "arrow-buffer",
@@ -194,7 +194,7 @@ dependencies = [
 [[package]]
 name = "arrow-array"
 version = "60.0.0"
-source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=async-writer#6ca4e9fb51513a526ba10fe409c0af8a65b90fae"
+source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=feat%2Fignore_extra_columns#834ccd0248aecfa65ec86c3b955f7044687ea118"
 dependencies = [
  "ahash",
  "arrow-buffer",
@@ -213,7 +213,7 @@ dependencies = [
 [[package]]
 name = "arrow-avro"
 version = "60.0.0"
-source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=async-writer#6ca4e9fb51513a526ba10fe409c0af8a65b90fae"
+source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=feat%2Fignore_extra_columns#834ccd0248aecfa65ec86c3b955f7044687ea118"
 dependencies = [
  "arrow-array",
  "arrow-buffer",
@@ -238,7 +238,7 @@ dependencies = [
 [[package]]
 name = "arrow-buffer"
 version = "60.0.0"
-source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=async-writer#6ca4e9fb51513a526ba10fe409c0af8a65b90fae"
+source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=feat%2Fignore_extra_columns#834ccd0248aecfa65ec86c3b955f7044687ea118"
 dependencies = [
  "bytes",
  "half",
@@ -249,7 +249,7 @@ dependencies = [
 [[package]]
 name = "arrow-cast"
 version = "60.0.0"
-source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=async-writer#6ca4e9fb51513a526ba10fe409c0af8a65b90fae"
+source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=feat%2Fignore_extra_columns#834ccd0248aecfa65ec86c3b955f7044687ea118"
 dependencies = [
  "arrow-array",
  "arrow-buffer",
@@ -270,7 +270,7 @@ dependencies = [
 [[package]]
 name = "arrow-cmp"
 version = "60.0.0"
-source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=async-writer#6ca4e9fb51513a526ba10fe409c0af8a65b90fae"
+source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=feat%2Fignore_extra_columns#834ccd0248aecfa65ec86c3b955f7044687ea118"
 dependencies = [
  "arrow-array",
  "arrow-buffer",
@@ -280,7 +280,7 @@ dependencies = [
 [[package]]
 name = "arrow-csv"
 version = "60.0.0"
-source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=async-writer#6ca4e9fb51513a526ba10fe409c0af8a65b90fae"
+source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=feat%2Fignore_extra_columns#834ccd0248aecfa65ec86c3b955f7044687ea118"
 dependencies = [
  "arrow-array",
  "arrow-cast",
@@ -294,7 +294,7 @@ dependencies = [
 [[package]]
 name = "arrow-data"
 version = "60.0.0"
-source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=async-writer#6ca4e9fb51513a526ba10fe409c0af8a65b90fae"
+source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=feat%2Fignore_extra_columns#834ccd0248aecfa65ec86c3b955f7044687ea118"
 dependencies = [
  "arrow-buffer",
  "arrow-schema",
@@ -333,7 +333,7 @@ dependencies = [
 [[package]]
 name = "arrow-ipc"
 version = "60.0.0"
-source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=async-writer#6ca4e9fb51513a526ba10fe409c0af8a65b90fae"
+source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=feat%2Fignore_extra_columns#834ccd0248aecfa65ec86c3b955f7044687ea118"
 dependencies = [
  "arrow-array",
  "arrow-buffer",
@@ -348,7 +348,7 @@ dependencies = [
 [[package]]
 name = "arrow-json"
 version = "60.0.0"
-source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=async-writer#6ca4e9fb51513a526ba10fe409c0af8a65b90fae"
+source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=feat%2Fignore_extra_columns#834ccd0248aecfa65ec86c3b955f7044687ea118"
 dependencies = [
  "arrow-array",
  "arrow-buffer",
@@ -372,7 +372,7 @@ dependencies = [
 [[package]]
 name = "arrow-ord"
 version = "60.0.0"
-source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=async-writer#6ca4e9fb51513a526ba10fe409c0af8a65b90fae"
+source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=feat%2Fignore_extra_columns#834ccd0248aecfa65ec86c3b955f7044687ea118"
 dependencies = [
  "arrow-array",
  "arrow-buffer",
@@ -385,7 +385,7 @@ dependencies = [
 [[package]]
 name = "arrow-row"
 version = "60.0.0"
-source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=async-writer#6ca4e9fb51513a526ba10fe409c0af8a65b90fae"
+source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=feat%2Fignore_extra_columns#834ccd0248aecfa65ec86c3b955f7044687ea118"
 dependencies = [
  "arrow-array",
  "arrow-buffer",
@@ -397,7 +397,7 @@ dependencies = [
 [[package]]
 name = "arrow-schema"
 version = "60.0.0"
-source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=async-writer#6ca4e9fb51513a526ba10fe409c0af8a65b90fae"
+source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=feat%2Fignore_extra_columns#834ccd0248aecfa65ec86c3b955f7044687ea118"
 dependencies = [
  "bitflags 2.13.2",
  "serde",
@@ -408,7 +408,7 @@ dependencies = [
 [[package]]
 name = "arrow-select"
 version = "60.0.0"
-source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=async-writer#6ca4e9fb51513a526ba10fe409c0af8a65b90fae"
+source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=feat%2Fignore_extra_columns#834ccd0248aecfa65ec86c3b955f7044687ea118"
 dependencies = [
  "ahash",
  "arrow-array",
@@ -422,7 +422,7 @@ dependencies = [
 [[package]]
 name = "arrow-string"
 version = "60.0.0"
-source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=async-writer#6ca4e9fb51513a526ba10fe409c0af8a65b90fae"
+source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=feat%2Fignore_extra_columns#834ccd0248aecfa65ec86c3b955f7044687ea118"
 dependencies = [
  "arrow-array",
  "arrow-buffer",
@@ -1711,7 +1711,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "arrow-schema",
@@ -1786,7 +1786,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-benchmarks"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "async-trait",
@@ -1817,7 +1817,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-catalog"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "async-trait",
@@ -1840,7 +1840,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-catalog-listing"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "async-trait",
@@ -1864,7 +1864,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-cli"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "async-trait",
@@ -1897,7 +1897,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-common"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "arrow-ipc",
@@ -1926,7 +1926,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-common-runtime"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "futures",
  "log",
@@ -1935,7 +1935,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-datasource"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "async-compression",
@@ -1975,7 +1975,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-datasource-arrow"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "arrow-ipc",
@@ -1999,7 +1999,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-datasource-avro"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "arrow-avro",
@@ -2022,7 +2022,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-datasource-csv"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "async-trait",
@@ -2044,7 +2044,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-datasource-json"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "async-trait",
@@ -2067,7 +2067,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-datasource-parquet"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "arrow-schema",
@@ -2102,11 +2102,11 @@ dependencies = [
 
 [[package]]
 name = "datafusion-doc"
-version = "55.1.0"
+version = "55.2.0"
 
 [[package]]
 name = "datafusion-examples"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "arrow-flight",
@@ -2143,7 +2143,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-execution"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "arrow-buffer",
@@ -2170,7 +2170,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-expr"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "arrow-schema",
@@ -2198,7 +2198,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-expr-common"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "datafusion-common",
@@ -2210,7 +2210,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-ffi"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "arrow-schema",
@@ -2247,7 +2247,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-functions"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "arrow-buffer",
@@ -2281,7 +2281,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-functions-aggregate"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "arrow-select",
@@ -2304,7 +2304,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-functions-aggregate-common"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "criterion",
@@ -2316,7 +2316,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-functions-nested"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "arrow-ord",
@@ -2342,7 +2342,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-functions-table"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "async-trait",
@@ -2356,7 +2356,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-functions-window"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "criterion",
@@ -2372,7 +2372,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-functions-window-common"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "datafusion-common",
  "datafusion-physical-expr-common",
@@ -2380,7 +2380,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-macros"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "datafusion-doc",
  "quote",
@@ -2389,7 +2389,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-optimizer"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "async-trait",
@@ -2416,7 +2416,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-physical-expr"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "arrow-schema",
@@ -2444,7 +2444,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-physical-expr-adapter"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "criterion",
@@ -2458,7 +2458,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-physical-expr-common"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "chrono",
@@ -2477,7 +2477,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-physical-optimizer"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "datafusion-common",
@@ -2499,7 +2499,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-physical-plan"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "arrow-data",
@@ -2544,7 +2544,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-proto"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "async-trait",
@@ -2582,7 +2582,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-proto-common"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "datafusion-common",
@@ -2594,7 +2594,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-proto-models"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "datafusion-common",
  "datafusion-proto-common",
@@ -2606,7 +2606,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-pruning"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "criterion",
@@ -2626,7 +2626,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-session"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow-schema",
  "async-trait",
@@ -2640,7 +2640,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-spark"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "base64 0.23.1",
@@ -2671,7 +2671,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-sql"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "bigdecimal",
@@ -2697,7 +2697,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-sqllogictest"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "arrow",
  "async-trait",
@@ -2730,7 +2730,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-substrait"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "async-recursion",
  "async-trait",
@@ -2751,7 +2751,7 @@ dependencies = [
 
 [[package]]
 name = "datafusion-wasmtest"
-version = "55.1.0"
+version = "55.2.0"
 dependencies = [
  "bytes",
  "chrono",
@@ -4619,7 +4619,7 @@ dependencies = [
 [[package]]
 name = "parquet"
 version = "60.0.0"
-source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=async-writer#6ca4e9fb51513a526ba10fe409c0af8a65b90fae"
+source = "git+https://github.com/gafiatulin/arrow-rs.git?branch=feat%2Fignore_extra_columns#834ccd0248aecfa65ec86c3b955f7044687ea118"
 dependencies = [
  "ahash",
  "arrow-array",
