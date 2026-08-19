@@ -547,6 +547,7 @@ fn roundtrip_csv_scan_preserves_format_options() -> Result<()> {
                 terminator: Some(0xff),
                 newlines_in_values,
                 truncated_rows: Some(true),
+                ignore_extra_columns: Some(true),
                 ..Default::default()
             }));
 
@@ -586,6 +587,11 @@ fn roundtrip_csv_scan_preserves_format_options() -> Result<()> {
         assert_eq!(csv_source.escape(), Some(b'\\'));
         assert_eq!(csv_source.comment(), Some(b'#'));
         assert_eq!(csv_source.terminator(), Some(0xff));
+        assert_eq!(
+            csv_source.newlines_in_values(),
+            newlines_in_values.unwrap_or(false)
+        );
+        assert!(csv_source.ignore_extra_columns());
         let node =
             PhysicalPlanNode::try_from_physical_plan(Arc::clone(&roundtripped), &codec)?;
         match node.physical_plan_type {
