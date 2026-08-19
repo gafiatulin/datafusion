@@ -421,19 +421,19 @@ incremental = false
 # datafusion-datasource-avro is available. The branch publishes 59.2.0,
 # semver-compatible with the 59.2.0 versions declared above.
 [patch.crates-io]
-arrow = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
-arrow-arith = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
-arrow-array = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
-arrow-avro = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
-arrow-buffer = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
-arrow-cast = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
-arrow-csv = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
-arrow-data = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
-arrow-ipc = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
-arrow-json = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
-arrow-ord = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
-arrow-row = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
-arrow-schema = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
-arrow-select = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
-arrow-string = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
-parquet = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "async-writer" }
+arrow = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "feat/ignore_extra_columns" }
+arrow-arith = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "feat/ignore_extra_columns" }
+arrow-array = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "feat/ignore_extra_columns" }
+arrow-avro = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "feat/ignore_extra_columns" }
+arrow-buffer = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "feat/ignore_extra_columns" }
+arrow-cast = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "feat/ignore_extra_columns" }
+arrow-csv = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "feat/ignore_extra_columns" }
+arrow-data = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "feat/ignore_extra_columns" }
+arrow-ipc = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "feat/ignore_extra_columns" }
+arrow-json = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "feat/ignore_extra_columns" }
+arrow-ord = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "feat/ignore_extra_columns" }
+arrow-row = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "feat/ignore_extra_columns" }
+arrow-schema = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "feat/ignore_extra_columns" }
+arrow-select = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "feat/ignore_extra_columns" }
+arrow-string = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "feat/ignore_extra_columns" }
+parquet = { git = "https://github.com/gafiatulin/arrow-rs.git", branch = "feat/ignore_extra_columns" }

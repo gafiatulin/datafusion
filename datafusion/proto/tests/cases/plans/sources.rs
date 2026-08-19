@@ -328,6 +328,7 @@ fn roundtrip_csv_scan_preserves_format_options() -> Result<()> {
             comment: Some(b'#'),
             newlines_in_values: Some(true),
             truncated_rows: Some(true),
+            ignore_extra_columns: Some(true),
             ..Default::default()
         }));
 
@@ -365,6 +366,7 @@ fn roundtrip_csv_scan_preserves_format_options() -> Result<()> {
     assert_eq!(csv_source.comment(), Some(b'#'));
     assert!(csv_source.newlines_in_values());
     assert!(csv_source.truncate_rows());
+    assert!(csv_source.ignore_extra_columns());
     Ok(())
 }
 

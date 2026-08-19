@@ -99,6 +99,11 @@ pub struct CsvReadOptions<'a> {
     /// When set to true then it will allow records with less than the expected number of columns and fill the missing columns with nulls.
     /// If the record’s schema is not nullable, then it will still return an error.
     pub truncated_rows: bool,
+    /// Whether to allow records with more than the expected number of columns when parsing.
+    /// By default this is set to false and will error if a CSV row has more fields than
+    /// the schema has columns.
+    /// When set to true, extra trailing fields in such rows are discarded.
+    pub ignore_extra_columns: bool,
 }
 
 impl Default for CsvReadOptions<'_> {
@@ -126,6 +131,7 @@ impl<'a> CsvReadOptions<'a> {
             comment: None,
             null_regex: None,
             truncated_rows: false,
+            ignore_extra_columns: false,
         }
     }
 
@@ -239,6 +245,16 @@ impl<'a> CsvReadOptions<'a> {
     /// If the record’s schema is not nullable, then it will still return an error.
     pub fn truncated_rows(mut self, truncated_rows: bool) -> Self {
         self.truncated_rows = truncated_rows;
+        self
+    }
+
+    /// Configure whether to allow records with more than the expected number of columns
+    /// when parsing.
+    /// By default this is set to false and will error if a CSV row has more fields than
+    /// the schema has columns.
+    /// When set to true, extra trailing fields in such rows are discarded.
+    pub fn ignore_extra_columns(mut self, ignore_extra_columns: bool) -> Self {
+        self.ignore_extra_columns = ignore_extra_columns;
         self
     }
 }
@@ -656,7 +672,8 @@ impl ReadOptions<'_> for CsvReadOptions<'_> {
             .with_schema_infer_max_rec(self.schema_infer_max_records)
             .with_file_compression_type(self.file_compression_type.to_owned())
             .with_null_regex(self.null_regex.clone())
-            .with_truncated_rows(self.truncated_rows);
+            .with_truncated_rows(self.truncated_rows)
+            .with_ignore_extra_columns(self.ignore_extra_columns);
 
         ListingOptions::new(Arc::new(file_format))
             .with_file_extension(self.file_extension)

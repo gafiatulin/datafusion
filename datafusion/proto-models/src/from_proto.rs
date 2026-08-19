@@ -289,6 +289,11 @@ impl From<&CsvOptionsProto> for CsvOptions {
             } else {
                 Some(proto.ignore_trailing_whitespace[0] != 0)
             },
+            ignore_extra_columns: if proto.ignore_extra_columns.is_empty() {
+                None
+            } else {
+                Some(proto.ignore_extra_columns[0] != 0)
+            },
         }
     }
 }

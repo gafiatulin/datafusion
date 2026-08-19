@@ -1541,6 +1541,105 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn infer_schema_with_ignore_extra_columns_true() -> Result<()> {
+        let session_ctx = SessionContext::new();
+        let state = session_ctx.state();
+
+        // CSV: header has 3 columns, but the second data row has an extra 4th column
+        let csv_data = Bytes::from("a,b,c\n1,2,3\n4,5,6,extra\n");
+        let variable_object_store = Arc::new(VariableStream::new(csv_data, 1));
+        let object_meta = ObjectMeta {
+            location: Path::parse("/")?,
+            last_modified: DateTime::default(),
+            size: u64::MAX,
+            e_tag: None,
+            version: None,
+        };
+
+        let csv_options = CsvOptions::default().with_ignore_extra_columns(true);
+        let csv_format = CsvFormat::default()
+            .with_has_header(true)
+            .with_options(csv_options)
+            .with_schema_infer_max_rec(10);
+
+        let inferred_schema = csv_format
+            .infer_schema(
+                &state,
+                &(variable_object_store.clone() as Arc<dyn ObjectStore>),
+                &[object_meta],
+            )
+            .await?;
+
+        // header has 3 columns; inferred schema should also have 3, extra column ignored
+        assert_eq!(inferred_schema.fields().len(), 3);
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn infer_schema_ignore_extra_columns_false_error() -> Result<()> {
+        let session_ctx = SessionContext::new();
+        let state = session_ctx.state();
+
+        // CSV: header has 3 cols, second data row has an extra 4th column
+        let csv_data = Bytes::from("a,b,c\n1,2,3\n4,5,6,extra\n");
+        let variable_object_store = Arc::new(VariableStream::new(csv_data, 1));
+        let object_meta = ObjectMeta {
+            location: Path::parse("/")?,
+            last_modified: DateTime::default(),
+            size: u64::MAX,
+            e_tag: None,
+            version: None,
+        };
+
+        // CsvFormat without enabling ignore_extra_columns (default behavior = false)
+        let csv_format = CsvFormat::default()
+            .with_has_header(true)
+            .with_schema_infer_max_rec(10);
+
+        let res = csv_format
+            .infer_schema(
+                &state,
+                &(variable_object_store.clone() as Arc<dyn ObjectStore>),
+                &[object_meta],
+            )
+            .await;
+
+        assert!(
+            res.is_err(),
+            "expected infer_schema to error on rows with extra columns when disabled"
+        );
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_read_csv_ignore_extra_columns_via_tempfile() -> Result<()> {
+        use std::io::Write;
+
+        let ctx = SessionContext::new();
+
+        // Create a temp file with a .csv suffix so the reader accepts it
+        let mut tmp = tempfile::Builder::new().suffix(".csv").tempfile()?;
+        // CSV has header "a,b,c". Second data row has an extra trailing field.
+        write!(tmp, "a,b,c\n1,2,3\n4,5,6,extra\n")?;
+        let path = tmp.path().to_str().unwrap().to_string();
+
+        let options = CsvReadOptions::default().ignore_extra_columns(true);
+
+        let df = ctx.read_csv(&path, options).await?;
+
+        let batches = df.collect().await?;
+        let combined = concat_batches(&batches[0].schema(), &batches)?;
+
+        // Both rows should be read, with the extra column discarded.
+        assert_eq!(combined.num_rows(), 2);
+        assert_eq!(combined.num_columns(), 3);
+
+        Ok(())
+    }
+
+    #[tokio::test]
     async fn test_write_empty_csv_from_sql() -> Result<()> {
         let ctx = SessionContext::new();
         let tmp_dir = tempfile::TempDir::new()?;

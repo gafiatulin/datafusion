@@ -229,6 +229,15 @@ impl CsvFormat {
         self
     }
 
+    /// Whether to allow records with more than the expected number of columns.
+    /// By default this is set to false and will error if the CSV rows have more
+    /// fields than the schema has columns.
+    /// When set to true, the extra trailing fields are discarded.
+    pub fn with_ignore_extra_columns(mut self, ignore_extra_columns: bool) -> Self {
+        self.options.ignore_extra_columns = Some(ignore_extra_columns);
+        self
+    }
+
     /// Set the regex to use for null values in the CSV reader.
     /// - default to treat empty values as null.
     pub fn with_null_regex(mut self, null_regex: Option<String>) -> Self {
@@ -542,7 +551,10 @@ impl CsvFormat {
                 )
                 .with_delimiter(self.options.delimiter)
                 .with_quote(self.options.quote)
-                .with_truncated_rows(self.options.truncated_rows.unwrap_or(false));
+                .with_truncated_rows(self.options.truncated_rows.unwrap_or(false))
+                .with_ignore_extra_columns(
+                    self.options.ignore_extra_columns.unwrap_or(false),
+                );
 
             if let Some(null_regex) = &self.options.null_regex {
                 let regex = Regex::new(null_regex.as_str())
@@ -966,6 +978,9 @@ impl From<&CsvFormatFactory> for datafusion_proto_models::protobuf::CsvOptions {
                     .map_or(vec![], |v| vec![v as u8]),
                 ignore_trailing_whitespace: options
                     .ignore_trailing_whitespace
+                    .map_or(vec![], |v| vec![v as u8]),
+                ignore_extra_columns: options
+                    .ignore_extra_columns
                     .map_or(vec![], |v| vec![v as u8]),
             }
         } else {

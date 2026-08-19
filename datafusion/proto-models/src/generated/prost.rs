@@ -1973,6 +1973,8 @@ pub struct CsvScanExecNode {
     pub newlines_in_values: bool,
     #[prost(bool, tag = "8")]
     pub truncate_rows: bool,
+    #[prost(bool, tag = "9")]
+    pub ignore_extra_columns: bool,
     #[prost(oneof = "csv_scan_exec_node::OptionalEscape", tags = "5")]
     pub optional_escape: ::core::option::Option<csv_scan_exec_node::OptionalEscape>,
     #[prost(oneof = "csv_scan_exec_node::OptionalComment", tags = "6")]

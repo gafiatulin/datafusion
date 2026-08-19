@@ -511,6 +511,8 @@ message CsvOptions {
   bytes ignore_leading_whitespace = 21;
   // Whether to ignore trailing whitespace in string values
   bytes ignore_trailing_whitespace = 22;
+  // Indicates if records with extra trailing columns are allowed, discarding the extras
+  bytes ignore_extra_columns = 23;
 }
 
 // Options controlling CSV format

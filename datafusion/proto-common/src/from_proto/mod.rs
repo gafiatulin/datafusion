@@ -1035,6 +1035,10 @@ impl TryFrom<&protobuf::CsvOptions> for CsvOptions {
                 .then(|| proto_opts.null_regex.clone()),
             comment: proto_opts.comment.first().copied(),
             truncated_rows: proto_opts.truncated_rows.first().map(|h| *h != 0),
+            ignore_extra_columns: proto_opts
+                .ignore_extra_columns
+                .first()
+                .map(|h| *h != 0),
             quote_style: proto_opts.quote_style().into(),
             ignore_leading_whitespace: proto_opts
                 .ignore_leading_whitespace

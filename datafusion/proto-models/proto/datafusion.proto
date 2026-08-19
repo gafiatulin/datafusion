@@ -1291,6 +1291,7 @@ message CsvScanExecNode {
   }
   bool newlines_in_values = 7;
   bool truncate_rows = 8;
+  bool ignore_extra_columns = 9;
 }
 
 message JsonScanExecNode {

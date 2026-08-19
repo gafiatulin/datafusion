@@ -3667,6 +3667,14 @@ config_namespace! {
         /// of columns, it creates a union schema containing all columns found across the files, and will
         /// pad any files missing columns with null values for their rows.
         pub truncated_rows: Option<bool>, default = None
+        /// Whether to allow records with more than the expected number of columns when parsing.
+        ///
+        /// When set to false (default), reading a CSV row with more fields than the schema has
+        /// columns will error.
+        ///
+        /// When set to true, extra trailing fields in such rows are discarded and the leading
+        /// fields are decoded as usual.
+        pub ignore_extra_columns: Option<bool>, default = None
     }
 }
 
@@ -3789,6 +3797,15 @@ impl CsvOptions {
     /// If the record’s schema is not nullable, then it will still return an error.
     pub fn with_truncated_rows(mut self, allow: bool) -> Self {
         self.truncated_rows = Some(allow);
+        self
+    }
+
+    /// Whether to allow records with more than the expected number of columns when parsing.
+    /// By default this is set to false and will error if a CSV row has more fields than
+    /// the schema has columns.
+    /// When set to true, extra trailing fields in such rows are discarded.
+    pub fn with_ignore_extra_columns(mut self, allow: bool) -> Self {
+        self.ignore_extra_columns = Some(allow);
         self
     }
 

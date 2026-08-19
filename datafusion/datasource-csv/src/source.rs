@@ -120,6 +120,11 @@ impl CsvSource {
     pub fn truncate_rows(&self) -> bool {
         self.options.truncated_rows.unwrap_or(false)
     }
+
+    // true if records with more than the expected number of columns are allowed
+    pub fn ignore_extra_columns(&self) -> bool {
+        self.options.ignore_extra_columns.unwrap_or(false)
+    }
     /// A column delimiter
     pub fn delimiter(&self) -> u8 {
         self.options.delimiter
@@ -173,6 +178,13 @@ impl CsvSource {
         conf
     }
 
+    /// Whether to allow records with more than the expected number of columns
+    pub fn with_ignore_extra_columns(&self, ignore_extra_columns: bool) -> Self {
+        let mut conf = self.clone();
+        conf.options.ignore_extra_columns = Some(ignore_extra_columns);
+        conf
+    }
+
     /// Whether values may contain newline characters
     pub fn newlines_in_values(&self) -> bool {
         self.options.newlines_in_values.unwrap_or(false)
@@ -194,7 +206,8 @@ impl CsvSource {
                 )
                 .with_header(self.has_header())
                 .with_quote(self.quote())
-                .with_truncated_rows(self.truncate_rows());
+                .with_truncated_rows(self.truncate_rows())
+                .with_ignore_extra_columns(self.ignore_extra_columns());
         if let Some(terminator) = self.terminator() {
             builder = builder.with_terminator(terminator);
         }
@@ -356,6 +369,7 @@ impl FileSource for CsvSource {
                 .transpose()?,
             newlines_in_values: self.newlines_in_values(),
             truncate_rows: self.truncate_rows(),
+            ignore_extra_columns: self.ignore_extra_columns(),
         };
         Ok(Some(protobuf::PhysicalPlanNode {
             physical_plan_type: Some(PhysicalPlanType::CsvScan(node)),
@@ -401,6 +415,7 @@ impl FileOpener for CsvOpener {
         let mut config = (*self.config).clone();
         config.options.has_header = Some(csv_has_header);
         config.options.truncated_rows = Some(config.truncate_rows());
+        config.options.ignore_extra_columns = Some(config.ignore_extra_columns());
 
         let file_compression_type = self.file_compression_type.to_owned();
 
@@ -629,6 +644,7 @@ impl CsvSource {
             quote: proto_str_to_byte(&scan.quote, "quote")?,
             newlines_in_values: Some(scan.newlines_in_values),
             truncated_rows: Some(scan.truncate_rows),
+            ignore_extra_columns: Some(scan.ignore_extra_columns),
             ..Default::default()
         };
         let source = Arc::new(
