@@ -115,16 +115,15 @@ logical_plan
 01)CopyTo: format=avro output_url=test_files/scratch/copy_avro/table_explain.avro options: ()
 02)--TableScan: source_table projection=[col1, col2]
 physical_plan
-01)DataSinkExec: sink=AvroFileSink(file_groups=[])
+01)DataSinkExec: sink=AvroSink(file_groups=[])
 02)--DataSourceExec: partitions=1, partition_sizes=[1]
 
-# EXPLAIN ANALYZE COPY ... STORED AS AVRO. Note the AvroFileSink does not
-# currently report rows_written/bytes_written/elapsed_compute metrics.
+# EXPLAIN ANALYZE COPY ... STORED AS AVRO reports sink metrics.
 query TT
 EXPLAIN ANALYZE COPY (SELECT col1, upper(col2) AS col2_upper FROM source_table ORDER BY col1) TO 'test_files/scratch/copy_avro/table_metrics.avro' STORED AS AVRO;
 ----
 Plan with Metrics
-01)DataSinkExec: sink=AvroFileSink(file_groups=[]), metrics=[]
+01)DataSinkExec: sink=AvroSink(file_groups=[]), metrics=[elapsed_compute=<slt:ignore>, bytes_written=<slt:ignore>, rows_written=2]
 02)--SortExec: expr=[col1@0 ASC NULLS LAST], preserve_partitioning=[false], metrics=[output_rows=2, elapsed_compute=<slt:ignore>, output_bytes=<slt:ignore>, output_batches=<slt:ignore>, spill_count=0, spilled_bytes=0.0 B, spilled_rows=0]
 03)----ProjectionExec: expr=[col1@0 as col1, upper(col2@1) as col2_upper], metrics=[output_rows=2, elapsed_compute=<slt:ignore>, output_bytes=<slt:ignore>, output_batches=1, expr_0_eval_time=<slt:ignore>, expr_1_eval_time=<slt:ignore>]
 04)------DataSourceExec: partitions=1, partition_sizes=[1], metrics=[]

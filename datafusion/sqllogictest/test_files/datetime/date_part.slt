@@ -1069,12 +1069,13 @@ FROM (SELECT arrow_cast(column1, 'Timestamp(Nanosecond, Some("Africa/Monrovia"))
 28 28500 28500000 28500000000
 NULL NULL NULL NULL
 
-# timestamps outside the range arrow represents are NULL, like the other parts
+# Second extraction uses the timestamp remainder even outside the datetime range;
+# sub-second extraction still returns NULL for an unrepresentable timestamp.
 query IIII
 SELECT extract(second from ts), extract(millisecond from ts), extract(microsecond from ts), extract(nanosecond from ts)
 FROM (VALUES (arrow_cast(9223372036854775807, 'Timestamp(Second, None)')), (NULL)) AS t(ts)
 ----
-NULL NULL NULL NULL
+7 NULL NULL NULL
 NULL NULL NULL NULL
 
 # test_extract_interval
@@ -1600,13 +1601,14 @@ SELECT date_part('microsecond', timestamp '1970-01-01T00:40:00' - timestamp '197
 ----
 NULL
 
-# Non-null inputs can give NULL results, so the result is nullable.
-# Reproducers from https://github.com/apache/datafusion/issues/26685
+# Second extraction works outside the datetime range.
 query I
 SELECT extract(second from ts) FROM (VALUES (arrow_cast(9223372036854775807, 'Timestamp(Second, None)'))) AS t(ts)
 ----
-NULL
+7
 
+# Non-null inputs can give NULL results, so the result is nullable.
+# Reproducer from https://github.com/apache/datafusion/issues/26685
 query I
 SELECT extract(hour from d) FROM (VALUES (arrow_cast(9223372036854775807, 'Duration(Second)'))) AS t(d)
 ----

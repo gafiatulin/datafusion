@@ -118,11 +118,10 @@ Plan with Metrics
 01)FilterExec: id@0 >= 0<slt:ignore>
 02)--DataSourceExec: <slt:ignore>row_groups_pruned_statistics=5 total<slt:ignore>
 
-# Both limits set: the byte limit also flushes the sub-1000-row remainders that
-# the row-count limit would otherwise carry into the next batch, so the file is
-# split more finely -> 8 row groups (whichever limit is reached first).
+# Both limits set: the byte limit is smaller than one encoded row, so it
+# dominates the row-count limit and produces one row group per row.
 statement ok
-COPY (SELECT value AS id FROM range(0, 4096))
+COPY (SELECT value AS id FROM range(0, 256))
 TO 'test_files/scratch/parquet_max_row_group_bytes/rg_count_size_and_bytes/'
 STORED AS PARQUET
 OPTIONS ('format.max_row_group_size' 1000, 'format.max_row_group_bytes' 1);
@@ -137,13 +136,12 @@ EXPLAIN ANALYZE SELECT * FROM rg_count_size_and_bytes WHERE id >= 0;
 ----
 Plan with Metrics
 01)FilterExec: id@0 >= 0<slt:ignore>
-02)--DataSourceExec: <slt:ignore>row_groups_pruned_statistics=8 total<slt:ignore>
+02)--DataSourceExec: <slt:ignore>row_groups_pruned_statistics=256 total<slt:ignore>
 
-# Byte limit drives alone: the row-count limit is far larger than the data, so
-# only the byte limit splits. Each 1024-row batch fills a fresh (empty) row
-# group, which is never split mid-batch -> 4 row groups.
+# Byte limit drives alone: even the first batch is split at the byte limit,
+# producing one row group per row.
 statement ok
-COPY (SELECT value AS id FROM range(0, 4096))
+COPY (SELECT value AS id FROM range(0, 256))
 TO 'test_files/scratch/parquet_max_row_group_bytes/rg_count_bytes_only/'
 STORED AS PARQUET
 OPTIONS ('format.max_row_group_size' 100000, 'format.max_row_group_bytes' 1);
@@ -158,7 +156,7 @@ EXPLAIN ANALYZE SELECT * FROM rg_count_bytes_only WHERE id >= 0;
 ----
 Plan with Metrics
 01)FilterExec: id@0 >= 0<slt:ignore>
-02)--DataSourceExec: <slt:ignore>row_groups_pruned_statistics=4 total<slt:ignore>
+02)--DataSourceExec: <slt:ignore>row_groups_pruned_statistics=256 total<slt:ignore>
 
 statement ok
 reset datafusion.execution.parquet.allow_single_file_parallelism;
