@@ -1140,9 +1140,10 @@ fn restricted_column(
         if !holds_once_fn(column.index()) {
             return None;
         }
-        #[expect(
+        #[allow(
+            clippy::allow_attributes,
             clippy::mutable_key_type,
-            reason = "ScalarValue arrays have mutable memory accounting, but their values are immutable"
+            reason = "The lint depends on Arrow's pool feature; memory accounting does not affect scalar equality or hashing"
         )]
         let mut values: HashSet<&ScalarValue> = HashSet::new();
         for expr in in_list.list() {
